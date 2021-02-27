@@ -11,21 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Step one
-        run: data
+        run: date
         
   job2:
     name: Second job
     runs-on: windows-latest
     steps:
       - name: Step one
-        run: data
-        
+        run: date        
   job3:
     name: Third job
     runs-on: macOS-latest
     steps:
       - name: Step one
-        run: data
+        run: date
         
   job4:
     name: Fourth job
