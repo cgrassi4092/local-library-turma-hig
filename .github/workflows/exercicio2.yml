@@ -1,0 +1,23 @@
+
+name: exercicio2
+
+on:
+  push:
+    branches: [ main ]
+    
+env:
+  NameFile: OutputFile
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+      
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: ${{env.NameFile}}
+        path: .
+        if-no-files-found: error
