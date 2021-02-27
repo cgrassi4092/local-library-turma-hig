@@ -1,23 +1,23 @@
-
-name: exercicio2
+name: Exercicio2Workflow
 
 on:
   push:
     branches: [ main ]
     
 env:
-  NameFile: OutputFile
+  NAME_FILE: OutputFile
   
 jobs:
   build:
     runs-on: ubuntu-latest
       
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     
     - name: Upload artifact
       uses: actions/upload-artifact@v2.2.2
       with:
-        name: ${{env.NameFile}}
+        name: ${{env.NAME_FILE}}
         path: .
         if-no-files-found: error
