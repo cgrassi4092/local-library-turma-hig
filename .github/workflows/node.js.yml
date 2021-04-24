@@ -72,14 +72,17 @@ jobs:
           VALIDATE_MARKDOWN: true
           JAVASCRIPT_DEFAULT_STYLE: prettier
   
+################# -------- UAT -------- #################
   
-  deploy:
+  deploy-to-uat:
     runs-on: ubuntu-latest
+    environment:
+      name: 'UAT'
     env:
       DB_URI: $${{ secrets.DB_URI }}
-      NODE_ENV: production
+      NODE_ENV: UAT
       
-    needs: [build, prettier]
+    needs: [build, prettier, linter]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -91,12 +94,50 @@ jobs:
         uses: akhileshns/heroku-deploy@v3.10.9 # This is the action
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: pedrolacerda-local-library
-          heroku_email: pedrohrl1@gmail.com
+          heroku_app_name: projeto-final-ci-cd-uat
+          heroku_email: henrique.grassi93@gmail.com
           justlogin: true
       
       - name: Set Heroku remote
-        run: heroku git:remote -a pedrolacerda-local-library
+        run: heroku git:remote -a projeto-final-ci-cd-uat
+      
+      - name: Set env variables
+        run: |
+          heroku config:set NODE_ENV=${{ env.NODE_ENV }}
+          heroku config:set MONGODB_URI=${{ env.DB_URI }}
+      
+      - name: Push code to Heroku
+        run: git push heroku main
+
+
+################# -------- PROD -------- #################
+
+  deploy-to-prod:
+    runs-on: ubuntu-latest
+    environment:
+      name: 'Prod'
+    env:
+      DB_URI: $${{ secrets.DB_URI }}
+      NODE_ENV: production
+      
+    needs: deploy-to-uat
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          # Full git history is needed to build on Heroku
+          fetch-depth: 0
+      
+      - name: Login Heroku
+        uses: akhileshns/heroku-deploy@v3.10.9 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: projeto-final-ci-cd-prod
+          heroku_email: henrique.grassi93@gmail.com
+          justlogin: true
+      
+      - name: Set Heroku remote
+        run: heroku git:remote -a projeto-final-ci-cd-prod
       
       - name: Set env variables
         run: |
